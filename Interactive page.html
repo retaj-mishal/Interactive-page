@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Classroom Champions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg: #17332b;
+    --bg-edge: #0f231d;
+    --panel: #1f4438;
+    --panel-2: #23503f;
+    --chalk: #f4efe2;
+    --chalk-dim: #b9c9bf;
+    --line: rgba(244,239,226,0.22);
+    --line-strong: rgba(244,239,226,0.4);
+    --coral: #ff7a68;
+    --gold: #ffc65c;
+    --teal: #57d6be;
+    --sky: #6fa8e0;
+    --violet: #b48ce0;
+    --danger: #ff6b6b;
+    --good: #6fd68f;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background: radial-gradient(circle at 20% 0%, var(--panel) 0%, var(--bg) 55%);
+    color:var(--chalk);
+    min-height:100vh;
+    padding:22px 18px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{max-width:1080px;margin:0 auto;}
+  h1,h2,h3{font-family:'Kalam',cursive;margin:0;}
+  button{font-family:'Inter',sans-serif;cursor:pointer;}
+  input, select{font-family:'Inter',sans-serif;}
+
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    padding-bottom:16px;
+    border-bottom:2px dashed var(--line);
+    margin-bottom:20px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-icon{font-size:30px;}
+  .brand-title{font-size:26px;color:var(--gold);line-height:1;}
+  .brand-sub{font-size:11px;letter-spacing:.08em;color:var(--chalk-dim);margin-top:2px;}
+  .class-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .class-switch-row{display:inline-flex; align-items:center; gap:6px;}
+  .class-switch-icon{font-size:12px;}
+  .class-select{
+    background:transparent; border:none; border-bottom:2px dashed var(--line-strong);
+    color:var(--chalk); font-size:14px; font-weight:700; padding:3px 2px; letter-spacing:normal;
+  }
+  .class-select:focus{outline:none; border-bottom-color:var(--gold);}
+  .class-select option{background:var(--panel); color:var(--chalk);}
+  .rename-class-btn{
+    background:none; border:none; font-size:12px; padding:2px 4px; border-radius:6px; line-height:1;
+    opacity:.75;
+  }
+  .rename-class-btn:hover{opacity:1; background:rgba(255,198,92,.15);}
+
+  .save-pill{
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+    padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+    color:var(--chalk-dim);
+  }
+  .save-dot{width:7px;height:7px;border-radius:50%;background:var(--good);}
+  .save-pill.saving .save-dot{background:var(--gold);}
+
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn{
+    border:1px solid var(--line); background:var(--panel-2); color:var(--chalk);
+    border-radius:10px; padding:8px 14px; font-size:13px; font-weight:600;
+    transition: transform .08s ease, background .15s ease;
+  }
+  .btn:hover{background:#2a5e4a;}
+  .btn:active{transform:scale(0.96);}
+  .btn.on{background:var(--gold); color:#2a2205; border-color:var(--gold);}
+  .btn.danger{border-color: rgba(255,107,107,.5); color:#ffb3b3;}
+  .btn.danger:hover{background:rgba(255,107,107,.15);}
+  .btn.ghost{background:transparent;}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  /* ---------- Star of the week ---------- */
+  .star-note{
+    position:relative;
+    background: linear-gradient(180deg, #fdf6e3, #f7ecc9);
+    color:#2c2408;
+    border-radius:4px;
+    padding:16px 20px 18px;
+    margin-bottom:22px;
+    transform: rotate(-0.4deg);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+  }
+  .star-note:before{
+    content:"";
+    position:absolute; top:-10px; left:26px; width:26px; height:16px;
+    background:#c99a1f; border-radius:2px; transform:rotate(-8deg);
+    box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .star-row{display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;}
+  .star-left{display:flex; gap:12px; align-items:flex-start; min-width:220px; flex:1;}
+  .star-emoji{font-size:26px; line-height:1;}
+  .star-label{font-size:10px; letter-spacing:.1em; font-weight:800; color:#8a6c14; margin-bottom:4px;}
+  .star-fields{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .star-input{
+    border:1px solid rgba(0,0,0,.15); background:rgba(255,255,255,.7);
+    border-radius:8px; padding:6px 10px; font-size:14px; font-weight:700; color:#2c2408;
+  }
+  .star-input.name{width:170px;}
+  .star-select{
+    border:1px solid rgba(0,0,0,.15); background:rgba(255,255,255,.7);
+    border-radius:8px; padding:6px 8px; font-size:13px; font-weight:700; color:#2c2408;
+  }
+  .star-reason{
+    flex:1 1 260px; border:1px solid rgba(0,0,0,.15); background:rgba(255,255,255,.55);
+    border-radius:8px; padding:8px 12px; font-size:13px; font-style:italic; color:#4a3c10;
+    min-width:220px;
+  }
+  .star-static-name{font-weight:800; font-size:16px;}
+  .star-static-reason{font-style:italic; font-size:13px; color:#5c4b16; margin-top:4px;}
+
+  /* ---------- Teams grid ---------- */
+  .teams-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px; margin-bottom:18px;
+  }
+  .team-card{
+    position:relative;
+    background:var(--panel);
+    border:2px dashed var(--line);
+    border-radius:14px;
+    padding:14px 14px 12px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .team-card.leader{border-color: var(--gold); box-shadow: 0 0 0 1px rgba(255,198,92,.25) inset;}
+  .team-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .rank-chip{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:800;
+    padding:4px 9px; border-radius:999px; border:1px solid var(--line);
+  }
+  .rank-chip.r1{background:rgba(255,198,92,.18); border-color:var(--gold); color:var(--gold);}
+  .rank-chip.r2{background:rgba(180,140,224,.15); border-color:var(--violet); color:var(--violet);}
+  .rank-chip.r3{background:rgba(255,122,104,.15); border-color:var(--coral); color:var(--coral);}
+  .rank-chip.r4{background:rgba(111,168,224,.15); border-color:var(--sky); color:var(--sky);}
+  .color-dot{width:12px; height:12px; border-radius:50%; flex-shrink:0;}
+  .remove-team-btn{
+    background:none; border:none; color:var(--chalk-dim); font-size:15px; padding:2px 4px;
+    border-radius:6px; line-height:1;
+  }
+  .remove-team-btn:hover{color:var(--danger); background:rgba(255,107,107,.12);}
+
+  .team-name-input{
+    background:transparent; border:none; border-bottom:1px dashed var(--line);
+    color:var(--chalk); font-family:'Kalam',cursive; font-size:19px; font-weight:700;
+    width:100%; padding:2px 0;
+  }
+  .team-name-input:focus{outline:none; border-bottom-color:var(--gold);}
+  .team-name-input[readonly]{border-bottom-color:transparent;}
+
+  .points-box{
+    background:var(--bg-edge); border-radius:10px; padding:8px 10px; text-align:center;
+  }
+  .points-label{font-size:9px; letter-spacing:.12em; color:var(--chalk-dim); font-weight:700;}
+  .points-value{
+    font-family:'Kalam',cursive; font-size:34px; font-weight:700; color:var(--chalk);
+    line-height:1.1; transition: transform .18s ease;
+  }
+  .points-value.pulse{transform:scale(1.18); color:var(--gold);}
+
+  .progress-track{height:8px; border-radius:99px; background:var(--bg-edge); overflow:hidden;}
+  .progress-fill{height:100%; border-radius:99px; transition:width .4s ease;}
+
+  .badges-row{display:flex; flex-wrap:wrap; gap:6px; min-height:26px; align-items:center;}
+  .badge-pill{
+    display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700;
+    background:var(--bg-edge); border:1px solid var(--line); border-radius:999px; padding:3px 9px;
+  }
+  .badge-remove{background:none; border:none; color:var(--chalk-dim); font-size:12px; padding:0 0 0 2px; line-height:1;}
+  .badge-remove:hover{color:var(--danger);}
+  .badge-add-btn{
+    font-size:11px; font-weight:700; background:transparent; border:1px dashed var(--line);
+    border-radius:999px; padding:3px 10px; color:var(--chalk-dim);
+  }
+  .badge-add-btn:hover{border-color:var(--gold); color:var(--gold);}
+  .badge-adder{display:flex; gap:4px; align-items:center;}
+  .badge-adder input{
+    width:100px; font-size:11px; background:var(--bg-edge); border:1px solid var(--line);
+    border-radius:999px; padding:4px 8px; color:var(--chalk);
+  }
+  .badge-adder button{
+    font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--gold);
+    background:var(--gold); color:#2a2205; font-weight:700;
+  }
+
+  .points-actions{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
+  .pt-btn{
+    border-radius:8px; border:1px solid var(--line); padding:7px 0; font-size:12px; font-weight:800;
+    color:var(--chalk);
+  }
+  .pt-btn.minus{background:rgba(255,107,107,.12); border-color:rgba(255,107,107,.35); color:#ffb3b3;}
+  .pt-btn.plus1{background:rgba(111,214,143,.12); border-color:rgba(111,214,143,.35); color:#a7e6ba;}
+  .pt-btn.plus5{background:rgba(111,168,224,.12); border-color:rgba(111,168,224,.35); color:#bcd6f2;}
+  .pt-btn.plus10{background:rgba(255,198,92,.18); border-color:var(--gold); color:var(--gold);}
+  .pt-btn:active{transform:scale(0.94);}
+
+  .display-row{text-align:center; font-size:11px; color:var(--chalk-dim); font-weight:700; padding-top:2px;}
+
+  .add-team-wrap{text-align:center; margin-bottom:26px;}
+  .add-team-btn{
+    border:2px dashed var(--line); background:transparent; color:var(--chalk-dim);
+    border-radius:12px; padding:10px 22px; font-size:13px; font-weight:700;
+  }
+  .add-team-btn:hover{border-color:var(--gold); color:var(--gold);}
+
+  /* ---------- Podium ---------- */
+  .podium-section{
+    background:var(--panel); border:2px dashed var(--line); border-radius:16px; padding:18px 18px 8px;
+  }
+  .podium-header{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
+  .podium-title{font-size:20px; color:var(--gold); display:flex; align-items:center; gap:8px;}
+  .celebrate-btn{
+    border:none; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:800;
+    background:var(--gold); color:#2a2205;
+  }
+  .celebrate-btn:active{transform:scale(0.96);}
+
+  .podium-stage{
+    display:flex; align-items:flex-end; justify-content:center; gap:14px;
+    padding:10px 0 0;
+  }
+  .podium-slot{display:flex; flex-direction:column; align-items:center; width:150px;}
+  .podium-name{font-size:13px; font-weight:800; text-align:center; margin-bottom:6px; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .podium-pts{font-size:12px; color:var(--chalk-dim); margin-bottom:8px; font-weight:700;}
+  .podium-bar{
+    width:100%; border-radius:10px 10px 0 0; display:flex; align-items:flex-start; justify-content:center;
+    padding-top:8px; font-size:22px; border:2px dashed var(--line-strong);
+  }
+  .podium-bar.p1{height:120px; background:linear-gradient(180deg, rgba(255,198,92,.35), rgba(255,198,92,.12));}
+  .podium-bar.p2{height:86px; background:linear-gradient(180deg, rgba(180,140,224,.3), rgba(180,140,224,.1));}
+  .podium-bar.p3{height:60px; background:linear-gradient(180deg, rgba(255,122,104,.3), rgba(255,122,104,.1));}
+  .podium-empty{color:var(--chalk-dim); text-align:center; padding:20px 0; font-size:13px;}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:50;
+  }
+  .modal-card{
+    background:var(--panel); border:2px dashed var(--line); border-radius:16px; padding:22px;
+    max-width:360px; width:100%;
+  }
+  .modal-card h3{font-size:20px; color:var(--gold); margin-bottom:10px;}
+  .modal-card p{font-size:13px; color:var(--chalk-dim); margin:0 0 16px; line-height:1.5;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:8px;}
+  .modal-input{
+    width:100%; background:var(--bg-edge); border:1px solid var(--line); border-radius:8px;
+    padding:9px 12px; color:var(--chalk); font-size:14px; margin-bottom:14px;
+  }
+  .modal-input:focus{outline:none; border-color:var(--gold);}
+
+  .badge-modal-header{display:flex; align-items:flex-start; gap:10px; margin-bottom:16px;}
+  .badge-modal-header .medal{font-size:22px; line-height:1.3;}
+  .badge-modal-header h3{font-size:18px; line-height:1.3;}
+  .team-name-highlight{font-weight:800;}
+  .field-label{font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--chalk-dim); margin:2px 0 8px;}
+  .emoji-grid{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;}
+  .emoji-btn{
+    width:38px; height:38px; border-radius:9px; border:1px solid var(--line);
+    background:var(--bg-edge); font-size:18px; display:flex; align-items:center; justify-content:center;
+    padding:0;
+  }
+  .emoji-btn:hover{border-color:var(--line-strong);}
+  .emoji-btn.selected{border-color:var(--gold); background:rgba(255,198,92,.18); box-shadow:0 0 0 2px rgba(255,198,92,.3) inset;}
+
+  .restore-label{
+    display:inline-block; font-size:12px; font-weight:700; color:var(--chalk-dim);
+    border:1px dashed var(--line); border-radius:8px; padding:6px 12px; cursor:pointer;
+  }
+  .restore-label:hover{border-color:var(--gold); color:var(--gold);}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:#0f231d; color:var(--chalk); border:1px solid var(--line); border-radius:10px;
+    padding:10px 18px; font-size:13px; font-weight:600; opacity:0; transition:opacity .25s, transform .25s;
+    z-index:60; pointer-events:none;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Confetti ---------- */
+  .confetti-piece{
+    position:fixed; top:-20px; width:9px; height:14px; opacity:.95; z-index:80; pointer-events:none;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall{
+    to{ transform: translateY(105vh) rotate(540deg); opacity:0.3; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .confetti-piece{animation:none; display:none;}
+    .points-value.pulse{transform:none;}
+  }
+
+  .footer-note{text-align:center; font-size:11px; color:var(--chalk-dim); margin-top:22px;}
+
+  @media (max-width:600px){
+    .points-actions{grid-template-columns:repeat(2,1fr);}
+    .podium-stage{gap:8px;}
+    .podium-slot{width:100px;}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="footer-note">Loading your classroom…</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = 'classroom-data';
+  var EMOJI_CYCLE = ['⭐','🔥','🎯','📚','🤝','🚀','💡','🏅'];
+  var TEAM_COLORS = ['#ff7a68','#ffc65c','#57d6be','#6fa8e0','#b48ce0','#f2a5c9'];
+  var CLASS_COUNT = 4;
+
+  function uid(prefix){
+    return (prefix || 't') + Math.random().toString(36).slice(2, 9);
+  }
+
+  function makeClass(name, teams){
+    return {
+      id: uid('c'),
+      name: name,
+      starOfWeek: { name: '', teamId: '', reason: '' },
+      teams: teams || []
+    };
+  }
+
+  var defaultState = function(){
+    var classes = [
+      makeClass('Class 1', [
+        { id: uid(), name: 'Word Wizards', points: 12, color: '#ff7a68', badges: [] },
+        { id: uid(), name: 'Number Ninjas', points: 8,  color: '#ffc65c', badges: [] },
+        { id: uid(), name: 'Bright Sparks', points: 15, color: '#57d6be', badges: [] }
+      ])
+    ];
+    for(var i = 2; i <= CLASS_COUNT; i++){
+      classes.push(makeClass('Class ' + i, []));
+    }
+    return {
+      activeClassId: classes[0].id,
+      teacherMode: true,
+      classes: classes
+    };
+  };
+
+  function activeClass(){
+    for(var i=0;i<state.classes.length;i++){
+      if(state.classes[i].id === state.activeClassId) return state.classes[i];
+    }
+    return state.classes[0];
+  }
+
+  var state = null;
+  var saveTimer = null;
+  var confirmAction = null;
+  var badgeModalTeamId = null;
+  var badgeModalEmoji = '⭐';
+
+  // ---------- Storage ----------
+  // window.storage only exists when this page runs as a Claude.ai artifact.
+  // Outside that (a local file, VS Code preview, a normal web server), we
+  // fall back to localStorage so the app still saves and reloads correctly.
+  var hasClaudeStorage = (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function');
+
+  function loadState(cb){
+    if(hasClaudeStorage){
+      window.storage.get(STORAGE_KEY, false).then(function(res){
+        applyLoadedValue(res && res.value, cb);
+      }).catch(function(){
+        state = defaultState();
+        cb();
+      });
+    } else {
+      var raw = null;
+      try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){}
+      applyLoadedValue(raw, cb);
+    }
+  }
+
+  function applyLoadedValue(raw, cb){
+    if(raw){
+      try{
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.classes) && parsed.classes.length){
+          state = parsed;
+          normalizeState();
+          cb();
+          return;
+        }
+        if(parsed && Array.isArray(parsed.teams)){
+          // Old single-class shape — migrate into class 1, keep 3 fresh empty classes.
+          var migratedFirst = makeClass(parsed.className || 'Class 1', parsed.teams);
+          migratedFirst.starOfWeek = parsed.starOfWeek || { name: '', teamId: '', reason: '' };
+          var rest = [];
+          for(var i = 2; i <= CLASS_COUNT; i++){ rest.push(makeClass('Class ' + i, [])); }
+          state = {
+            activeClassId: migratedFirst.id,
+            teacherMode: parsed.teacherMode !== undefined ? parsed.teacherMode : true,
+            classes: [migratedFirst].concat(rest)
+          };
+          cb();
+          return;
+        }
+      }catch(e){}
+    }
+    state = defaultState();
+    cb();
+  }
+
+  // Fills in any missing fields (e.g. if a class was added/edited outside the app)
+  function normalizeState(){
+    if(!Array.isArray(state.classes) || !state.classes.length){
+      state = defaultState();
+      return;
+    }
+    state.classes.forEach(function(c){
+      if(!c.id) c.id = uid('c');
+      if(!Array.isArray(c.teams)) c.teams = [];
+      if(!c.starOfWeek) c.starOfWeek = { name: '', teamId: '', reason: '' };
+      c.teams.forEach(function(t){
+        if(!t.id) t.id = uid();
+        if(!Array.isArray(t.badges)) t.badges = [];
+        t.badges.forEach(function(b){ if(!b.id) b.id = uid('b'); });
+      });
+    });
+    var found = state.classes.some(function(c){ return c.id === state.activeClassId; });
+    if(!found) state.activeClassId = state.classes[0].id;
+  }
+
+  function scheduleSave(){
+    setSaveStatus('saving');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      var payload = JSON.stringify(state);
+      if(hasClaudeStorage){
+        window.storage.set(STORAGE_KEY, payload, false).then(function(){
+          setSaveStatus('saved');
+        }).catch(function(){
+          setSaveStatus('saved');
+          showToast('Could not save — check your connection.');
+        });
+      } else {
+        try{
+          localStorage.setItem(STORAGE_KEY, payload);
+          setSaveStatus('saved');
+        }catch(e){
+          setSaveStatus('saved');
+          showToast('Could not save locally in this browser.');
+        }
+      }
+    }, 400);
+  }
+
+  function setSaveStatus(status){
+    var pill = document.getElementById('save-pill');
+    if(!pill) return;
+    if(status === 'saving'){
+      pill.classList.add('saving');
+      pill.querySelector('.save-text').textContent = 'Saving…';
+    } else {
+      pill.classList.remove('saving');
+      pill.querySelector('.save-text').textContent = 'Saved';
+    }
+  }
+
+  // ---------- Helpers ----------
+  function clamp0(n){ return n < 0 ? 0 : n; }
+
+  function rankedTeams(){
+    var ac = activeClass();
+    return ac.teams
+      .map(function(t, i){ return { team: t, idx: i }; })
+      .sort(function(a, b){ return b.team.points - a.team.points; })
+      .map(function(entry, i){ return { team: entry.team, rank: i + 1 }; });
+  }
+
+  function nextTeamColor(){
+    var used = activeClass().teams.map(function(t){ return t.color; });
+    for(var i=0;i<TEAM_COLORS.length;i++){
+      if(used.indexOf(TEAM_COLORS[i]) === -1) return TEAM_COLORS[i];
+    }
+    return TEAM_COLORS[activeClass().teams.length % TEAM_COLORS.length];
+  }
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  function esc(str){
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  // ---------- Render ----------
+  function render(){
+    var app = document.getElementById('app');
+    app.innerHTML =
+      renderTopbar() +
+      renderStarNote() +
+      renderTeamsGrid() +
+      renderAddTeamRow() +
+      renderPodium() +
+      '<div class="footer-note">Your class data is saved automatically, right in this artifact.</div>';
+    bindEvents();
+  }
+
+  function renderTopbar(){
+    var tm = state.teacherMode;
+    var ac = activeClass();
+    var classOptions = state.classes.map(function(c){
+      return '<option value="' + c.id + '" ' + (c.id === ac.id ? 'selected' : '') + '>' + esc(c.name) + '</option>';
+    }).join('');
+
+    return (
+      '<div class="topbar">' +
+        '<div class="brand">' +
+          '<div class="brand-icon">🏆</div>' +
+          '<div>' +
+            '<h1 class="brand-title">Classroom Champions</h1>' +
+            '<div class="brand-sub">' +
+              '<span class="class-switch-row">' +
+                '<span class="class-switch-icon">🏫</span>' +
+                '<select class="class-select" id="class-select">' + classOptions + '</select>' +
+                (tm ? '<button class="rename-class-btn" id="rename-class-btn" title="Rename class">✏️</button>' : '') +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="class-row">' +
+          '<span class="save-pill" id="save-pill"><span class="save-dot"></span><span class="save-text">Saved</span></span>' +
+          '<div class="top-actions">' +
+            '<button class="btn ' + (tm ? 'on' : '') + '" id="teacher-toggle-btn">' + (tm ? '👩‍🏫 Teacher Mode' : '👀 Display Mode') + '</button>' +
+            (tm ? '<button class="btn danger" id="reset-btn">Reset</button>' : '') +
+            '<button class="btn" id="backup-btn">💾 Backup</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderStarNote(){
+    var tm = state.teacherMode;
+    var ac = activeClass();
+    var sw = ac.starOfWeek;
+    var teamOptions = ac.teams.map(function(t){
+      return '<option value="' + t.id + '" ' + (sw.teamId === t.id ? 'selected' : '') + '>' + esc(t.name) + '</option>';
+    }).join('');
+
+    var left;
+    if(tm){
+      left =
+        '<div class="star-fields">' +
+          '<input class="star-input name" id="star-name-input" placeholder="Student or team name" value="' + esc(sw.name) + '" maxlength="40">' +
+          '<select class="star-select" id="star-team-select"><option value="">— team —</option>' + teamOptions + '</select>' +
+        '</div>';
+    } else {
+      var teamName = '';
+      ac.teams.forEach(function(t){ if(t.id === sw.teamId) teamName = t.name; });
+      left = '<div class="star-static-name">' + esc(sw.name || 'To be announced') + (teamName ? ' <span style="font-weight:600;color:#7a6412;">(' + esc(teamName) + ')</span>' : '') + '</div>';
+    }
+
+    var right;
+    if(tm){
+      right = '<input class="star-reason" id="star-reason-input" placeholder="Why they earned it…" value="' + esc(sw.reason) + '" maxlength="90">';
+    } else {
+      right = sw.reason ? '<div class="star-static-reason">“' + esc(sw.reason) + '”</div>' : '';
+    }
+
+    return (
+      '<div class="star-note">' +
+        '<div class="star-row">' +
+          '<div class="star-left">' +
+            '<div class="star-emoji">🌟</div>' +
+            '<div>' +
+              '<div class="star-label">Star of the week</div>' +
+              left +
+            '</div>' +
+          '</div>' +
+          '<div style="flex:1 1 240px; min-width:220px;">' + right + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderTeamsGrid(){
+    var ac = activeClass();
+    var ranks = rankedTeams();
+    if(ac.teams.length === 0){
+      return '<div class="teams-grid"><div class="podium-empty" style="width:100%;">No teams yet in ' + esc(ac.name) + ' — add your first team below to get started.</div></div>';
+    }
+    var rankById = {};
+    ranks.forEach(function(r){ rankById[r.team.id] = r.rank; });
+
+    var html = '<div class="teams-grid">';
+    ac.teams.forEach(function(team){
+      html += renderTeamCard(team, rankById[team.id]);
+    });
+    html += '</div>';
+    return html;
+  }
+
+  var PROGRESS_SCALE = 30; // points needed for a "full" bar; each team's bar is independent of the others
+
+  function renderTeamCard(team, rank){
+    var tm = state.teacherMode;
+    var pct = Math.max(0, Math.min(100, Math.round((team.points / PROGRESS_SCALE) * 100)));
+    var rankClass = 'r' + Math.min(rank, 4);
+    var rankLabel = rank === 1 ? '🏆 Rank 1' : rank === 2 ? '🥈 Rank 2' : rank === 3 ? '🥉 Rank 3' : '🎗️ Rank ' + rank;
+
+    var badgesHtml = team.badges.map(function(b){
+      return (
+        '<span class="badge-pill">' + b.icon + ' ' + esc(b.label) +
+        (tm ? '<button class="badge-remove" data-action="remove-badge" data-team="' + team.id + '" data-badge="' + b.id + '">×</button>' : '') +
+        '</span>'
+      );
+    }).join('');
+
+    var badgeAdder = tm
+      ? '<button class="badge-add-btn" data-action="open-badge-modal" data-team="' + team.id + '">+ Badge</button>'
+      : '';
+
+    return (
+      '<div class="team-card ' + (rank === 1 ? 'leader' : '') + '">' +
+        '<div class="team-top">' +
+          '<span class="rank-chip ' + rankClass + '">' + rankLabel + '</span>' +
+          '<div style="display:flex; align-items:center; gap:8px;">' +
+            '<span class="color-dot" style="background:' + team.color + '"></span>' +
+            (tm && activeClass().teams.length > 1 ? '<button class="remove-team-btn" data-action="remove-team" data-team="' + team.id + '" title="Remove team">✕</button>' : '') +
+          '</div>' +
+        '</div>' +
+        '<input class="team-name-input" data-team="' + team.id + '" data-action="edit-team-name" value="' + esc(team.name) + '" maxlength="30" ' + (tm ? '' : 'readonly') + '>' +
+        '<div class="points-box">' +
+          '<div class="points-label">TOTAL POINTS</div>' +
+          '<div class="points-value" id="points-' + team.id + '">' + team.points + '</div>' +
+        '</div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%; background:' + team.color + '"></div></div>' +
+        '<div class="badges-row">' + badgesHtml + badgeAdder + '</div>' +
+        (tm ?
+          '<div class="points-actions">' +
+            '<button class="pt-btn minus" data-action="adjust" data-team="' + team.id + '" data-amount="-5">-5</button>' +
+            '<button class="pt-btn plus1" data-action="adjust" data-team="' + team.id + '" data-amount="1">+1</button>' +
+            '<button class="pt-btn plus5" data-action="adjust" data-team="' + team.id + '" data-amount="5">+5</button>' +
+            '<button class="pt-btn plus10" data-action="adjust" data-team="' + team.id + '" data-amount="10">+10 ⭐</button>' +
+          '</div>'
+          : '<div class="display-row">Keep it up!</div>'
+        ) +
+      '</div>'
+    );
+  }
+
+  function renderAddTeamRow(){
+    if(!state.teacherMode) return '';
+    return '<div class="add-team-wrap"><button class="add-team-btn" id="add-team-btn">+ Add a team</button></div>';
+  }
+
+  function renderPodium(){
+    var ranks = rankedTeams().slice(0, 3);
+    var order = [1, 0, 2]; // display order: 2nd, 1st, 3rd
+    var stage = '';
+    if(ranks.length === 0){
+      stage = '<div class="podium-empty">Add teams to see the podium.</div>';
+    } else {
+      order.forEach(function(i){
+        var entry = ranks[i];
+        if(!entry){ stage += '<div class="podium-slot"></div>'; return; }
+        var barClass = entry.rank === 1 ? 'p1' : entry.rank === 2 ? 'p2' : 'p3';
+        var medal = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉';
+        stage +=
+          '<div class="podium-slot">' +
+            '<div class="podium-name">' + esc(entry.team.name) + '</div>' +
+            '<div class="podium-pts">' + entry.team.points + ' pts</div>' +
+            '<div class="podium-bar ' + barClass + '">' + medal + '</div>' +
+          '</div>';
+      });
+    }
+
+    return (
+      '<div class="podium-section" id="podium-section">' +
+        '<div class="podium-header">' +
+          '<div class="podium-title">🏅 Victory Podium</div>' +
+          '<button class="celebrate-btn" id="celebrate-btn">🎉 Celebrate Winners</button>' +
+        '</div>' +
+        '<div class="podium-stage">' + stage + '</div>' +
+      '</div>'
+    );
+  }
+
+  // ---------- Event binding ----------
+  function bindEvents(){
+    var classSelect = document.getElementById('class-select');
+    if(classSelect){
+      classSelect.addEventListener('change', function(){
+        state.activeClassId = classSelect.value;
+        render();
+        scheduleSave();
+      });
+    }
+
+    var renameClassBtn = document.getElementById('rename-class-btn');
+    if(renameClassBtn){
+      renameClassBtn.addEventListener('click', openRenameClassModal);
+    }
+
+    var teacherBtn = document.getElementById('teacher-toggle-btn');
+    if(teacherBtn){
+      teacherBtn.addEventListener('click', function(){
+        state.teacherMode = !state.teacherMode;
+        render();
+        scheduleSave();
+      });
+    }
+
+    var resetBtn = document.getElementById('reset-btn');
+    if(resetBtn){
+      resetBtn.addEventListener('click', function(){
+        var ac = activeClass();
+        openConfirm(
+          'Reset scores for "' + ac.name + '"?',
+          'This clears this class\u2019s team points and badges, and its Star of the Week note. Team names stay, and your other classes aren\u2019t touched. This can\u2019t be undone.',
+          function(){
+            ac.teams.forEach(function(t){ t.points = 0; t.badges = []; });
+            ac.starOfWeek = { name: '', teamId: '', reason: '' };
+            render();
+            scheduleSave();
+            showToast('Scores reset for ' + ac.name + '.');
+          }
+        );
+      });
+    }
+
+    var backupBtn = document.getElementById('backup-btn');
+    if(backupBtn){
+      backupBtn.addEventListener('click', openBackupModal);
+    }
+
+    var starName = document.getElementById('star-name-input');
+    if(starName){
+      starName.addEventListener('input', function(){
+        activeClass().starOfWeek.name = starName.value;
+        scheduleSave();
+      });
+    }
+    var starTeam = document.getElementById('star-team-select');
+    if(starTeam){
+      starTeam.addEventListener('change', function(){
+        activeClass().starOfWeek.teamId = starTeam.value;
+        scheduleSave();
+      });
+    }
+    var starReason = document.getElementById('star-reason-input');
+    if(starReason){
+      starReason.addEventListener('input', function(){
+        activeClass().starOfWeek.reason = starReason.value;
+        scheduleSave();
+      });
+    }
+
+    var addTeamBtn = document.getElementById('add-team-btn');
+    if(addTeamBtn){
+      addTeamBtn.addEventListener('click', function(){
+        activeClass().teams.push({ id: uid(), name: 'New Team', points: 0, color: nextTeamColor(), badges: [] });
+        render();
+        scheduleSave();
+      });
+    }
+
+    var celebrateBtn = document.getElementById('celebrate-btn');
+    if(celebrateBtn){
+      celebrateBtn.addEventListener('click', launchConfetti);
+    }
+
+    // Team name edits
+    document.querySelectorAll('[data-action="edit-team-name"]').forEach(function(input){
+      input.addEventListener('input', function(){
+        var team = findTeam(input.getAttribute('data-team'));
+        if(team){ team.name = input.value; scheduleSave(); refreshDependentText(); }
+      });
+    });
+
+    // Delegated clicks — attach exactly once, since #app itself persists
+    // across renders (only its innerHTML changes). Re-adding this on every
+    // render() call was stacking up duplicate listeners, causing a single
+    // click to fire N times after N renders (e.g. "+1" adding 40 points).
+    var appEl = document.getElementById('app');
+    if(!appEl.dataset.clickBound){
+      appEl.dataset.clickBound = '1';
+      appEl.addEventListener('click', function(e){
+      var el = e.target.closest('[data-action]');
+      if(!el) return;
+      var action = el.getAttribute('data-action');
+
+      if(action === 'adjust'){
+        var team = findTeam(el.getAttribute('data-team'));
+        var amount = parseInt(el.getAttribute('data-amount'), 10);
+        if(team){
+          team.points = clamp0(team.points + amount);
+          pulsePoints(team.id);
+          render();
+          scheduleSave();
+        }
+      } else if(action === 'remove-team'){
+        var t2 = findTeam(el.getAttribute('data-team'));
+        var acForRemove = activeClass();
+        if(t2 && acForRemove.teams.length > 1){
+          openConfirm(
+            'Remove "' + t2.name + '"?',
+            'This team and its points/badges will be deleted.',
+            function(){
+              acForRemove.teams = acForRemove.teams.filter(function(x){ return x.id !== t2.id; });
+              if(acForRemove.starOfWeek.teamId === t2.id) acForRemove.starOfWeek.teamId = '';
+              render();
+              scheduleSave();
+            }
+          );
+        }
+      } else if(action === 'open-badge-modal'){
+        openBadgeModal(el.getAttribute('data-team'));
+      } else if(action === 'remove-badge'){
+        var team3 = findTeam(el.getAttribute('data-team'));
+        var badgeId = el.getAttribute('data-badge');
+        if(team3){
+          team3.badges = team3.badges.filter(function(b){ return b.id !== badgeId; });
+          render();
+          scheduleSave();
+        }
+      }
+      });
+    }
+
+  }
+
+  // ---------- Add-badge modal (emoji picker + title) ----------
+  function openBadgeModal(teamId){
+    var team = findTeam(teamId);
+    if(!team) return;
+    badgeModalTeamId = teamId;
+    badgeModalEmoji = EMOJI_CYCLE[0];
+
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.id = 'badge-modal';
+    wrap.innerHTML =
+      '<div class="modal-card">' +
+        '<div class="badge-modal-header">' +
+          '<span class="medal">🏅</span>' +
+          '<h3 style="margin:0;">Add Badge to <span class="team-name-highlight" style="color:' + team.color + '">' + esc(team.name) + '</span></h3>' +
+        '</div>' +
+        '<div class="field-label">Badge Emoji</div>' +
+        '<div class="emoji-grid" id="emoji-grid"></div>' +
+        '<input type="text" class="modal-input" id="badge-emoji-input" maxlength="4" value="' + badgeModalEmoji + '">' +
+        '<div class="field-label">Badge Title</div>' +
+        '<input type="text" class="modal-input" id="badge-title-input" placeholder="e.g. Active, Teamwork, Accuracy" maxlength="18">' +
+        '<div class="modal-actions">' +
+          '<button class="btn ghost" id="badge-cancel-btn">Cancel</button>' +
+          '<button class="btn on" id="badge-add-confirm-btn">Add Badge</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    var grid = document.getElementById('emoji-grid');
+    EMOJI_CYCLE.forEach(function(emoji){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'emoji-btn' + (emoji === badgeModalEmoji ? ' selected' : '');
+      btn.textContent = emoji;
+      btn.addEventListener('click', function(){
+        badgeModalEmoji = emoji;
+        document.getElementById('badge-emoji-input').value = emoji;
+        grid.querySelectorAll('.emoji-btn').forEach(function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+      });
+      grid.appendChild(btn);
+    });
+
+    var emojiInput = document.getElementById('badge-emoji-input');
+    emojiInput.addEventListener('input', function(){
+      badgeModalEmoji = emojiInput.value.trim() || '⭐';
+      grid.querySelectorAll('.emoji-btn').forEach(function(b){
+        b.classList.toggle('selected', b.textContent === badgeModalEmoji);
+      });
+    });
+
+    var titleInput = document.getElementById('badge-title-input');
+    titleInput.focus();
+    titleInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); confirmAddBadge(); }
+    });
+
+    document.getElementById('badge-cancel-btn').addEventListener('click', closeBadgeModal);
+    document.getElementById('badge-add-confirm-btn').addEventListener('click', confirmAddBadge);
+    wrap.addEventListener('click', function(e){ if(e.target === wrap) closeBadgeModal(); });
+  }
+
+  function confirmAddBadge(){
+    var team = findTeam(badgeModalTeamId);
+    var titleInput = document.getElementById('badge-title-input');
+    var emojiInput = document.getElementById('badge-emoji-input');
+    if(!team || !titleInput) return;
+    var label = titleInput.value.trim();
+    if(!label){ titleInput.focus(); return; }
+    var emoji = (emojiInput.value.trim() || badgeModalEmoji || '⭐');
+    team.badges.push({ id: uid(), icon: emoji, label: label });
+    closeBadgeModal();
+    render();
+    scheduleSave();
+  }
+
+  function closeBadgeModal(){
+    var m = document.getElementById('badge-modal');
+    if(m) m.remove();
+    badgeModalTeamId = null;
+  }
+
+  function findTeam(id){
+    var teams = activeClass().teams;
+    for(var i=0;i<teams.length;i++){
+      if(teams[i].id === id) return teams[i];
+    }
+    return null;
+  }
+
+  function refreshDependentText(){
+    // team names can appear in podium / star select without a full re-render feel jumpy;
+    // for simplicity and correctness we do a light delayed re-render.
+    clearTimeout(refreshDependentText._t);
+    refreshDependentText._t = setTimeout(render, 500);
+  }
+
+  function pulsePoints(teamId){
+    var el = document.getElementById('points-' + teamId);
+    if(el){
+      el.classList.add('pulse');
+      setTimeout(function(){ el.classList.remove('pulse'); }, 220);
+    }
+  }
+
+  // ---------- Confirm modal ----------
+  function openConfirm(title, message, onConfirm){
+    confirmAction = onConfirm;
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.id = 'confirm-modal';
+    wrap.innerHTML =
+      '<div class="modal-card">' +
+        '<h3>' + esc(title) + '</h3>' +
+        '<p>' + esc(message) + '</p>' +
+        '<div class="modal-actions">' +
+          '<button class="btn ghost" id="confirm-cancel">Cancel</button>' +
+          '<button class="btn danger" id="confirm-ok">Confirm</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+    document.getElementById('confirm-cancel').addEventListener('click', closeConfirm);
+    document.getElementById('confirm-ok').addEventListener('click', function(){
+      if(confirmAction) confirmAction();
+      closeConfirm();
+    });
+    wrap.addEventListener('click', function(e){ if(e.target === wrap) closeConfirm(); });
+  }
+  function closeConfirm(){
+    var m = document.getElementById('confirm-modal');
+    if(m) m.remove();
+    confirmAction = null;
+  }
+
+  // ---------- Rename class modal ----------
+  function openRenameClassModal(){
+    var ac = activeClass();
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.id = 'rename-class-modal';
+    wrap.innerHTML =
+      '<div class="modal-card">' +
+        '<h3>✏️ Rename Class</h3>' +
+        '<p>This only renames the class you\u2019re currently viewing.</p>' +
+        '<input type="text" class="modal-input" id="rename-class-input" value="' + esc(ac.name) + '" maxlength="30">' +
+        '<div class="modal-actions">' +
+          '<button class="btn ghost" id="rename-cancel-btn">Cancel</button>' +
+          '<button class="btn on" id="rename-save-btn">Save</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    var input = document.getElementById('rename-class-input');
+    input.focus();
+    input.select();
+
+    function save(){
+      var val = input.value.trim();
+      if(val){ ac.name = val; render(); scheduleSave(); }
+      closeRenameClassModal();
+    }
+
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); save(); }
+    });
+    document.getElementById('rename-save-btn').addEventListener('click', save);
+    document.getElementById('rename-cancel-btn').addEventListener('click', closeRenameClassModal);
+    wrap.addEventListener('click', function(e){ if(e.target === wrap) closeRenameClassModal(); });
+  }
+  function closeRenameClassModal(){
+    var m = document.getElementById('rename-class-modal');
+    if(m) m.remove();
+  }
+
+  // ---------- Backup modal ----------
+  function openBackupModal(){
+    var wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.id = 'backup-modal';
+    wrap.innerHTML =
+      '<div class="modal-card">' +
+        '<h3>💾 Backup &amp; Restore</h3>' +
+        '<p>Download a copy of all your classes (teams, points, badges), or restore from a file you saved earlier.</p>' +
+        '<div class="modal-actions" style="justify-content:space-between;">' +
+          '<label class="restore-label" for="restore-file-input">📤 Restore from file</label>' +
+          '<button class="btn" id="download-backup-btn">📥 Download backup</button>' +
+        '</div>' +
+        '<input type="file" id="restore-file-input" accept=".json" class="visually-hidden">' +
+        '<div class="modal-actions" style="margin-top:16px;">' +
+          '<button class="btn ghost" id="backup-close-btn">Close</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    document.getElementById('backup-close-btn').addEventListener('click', closeBackupModal);
+    wrap.addEventListener('click', function(e){ if(e.target === wrap) closeBackupModal(); });
+
+    document.getElementById('download-backup-btn').addEventListener('click', function(){
+      var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'classroom-champions-backup-all-classes.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Backup downloaded (all 4 classes).');
+    });
+
+    document.getElementById('restore-file-input').addEventListener('change', function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        try{
+          var parsed = JSON.parse(reader.result);
+          if(parsed && Array.isArray(parsed.classes) && parsed.classes.length){
+            state = parsed;
+            normalizeState();
+          } else if(parsed && Array.isArray(parsed.teams)){
+            // Backward-compat: a backup saved before multi-class support.
+            var migratedFirst = makeClass(parsed.className || 'Class 1', parsed.teams);
+            migratedFirst.starOfWeek = parsed.starOfWeek || { name:'', teamId:'', reason:'' };
+            var rest = [];
+            for(var i = 2; i <= CLASS_COUNT; i++){ rest.push(makeClass('Class ' + i, [])); }
+            state = {
+              activeClassId: migratedFirst.id,
+              teacherMode: parsed.teacherMode !== undefined ? parsed.teacherMode : true,
+              classes: [migratedFirst].concat(rest)
+            };
+          } else {
+            throw new Error('bad shape');
+          }
+          closeBackupModal();
+          render();
+          scheduleSave();
+          showToast('Backup restored.');
+        }catch(err){
+          showToast('That file doesn\u2019t look like a valid backup.');
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+  function closeBackupModal(){
+    var m = document.getElementById('backup-modal');
+    if(m) m.remove();
+  }
+
+  // ---------- Confetti ----------
+  function launchConfetti(){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){
+      showToast('🎉 Congratulations to the winning teams!');
+      return;
+    }
+    var colors = ['#ff7a68', '#ffc65c', '#57d6be', '#6fa8e0', '#b48ce0'];
+    for(var i = 0; i < 60; i++){
+      (function(){
+        var piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        document.body.appendChild(piece);
+        setTimeout(function(){ piece.remove(); }, 3200);
+      })();
+    }
+  }
+
+  // ---------- Init ----------
+  loadState(function(){
+    render();
+  });
+})();
+</script>
+</body>
+</html>
